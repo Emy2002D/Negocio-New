@@ -1,0 +1,102 @@
+[{
+  "_id": {
+    "$oid": "68f1521615badbb925446bcf"
+  },
+  "cliente": "emiliano vega diaz",
+  "telefono": "5560899091",
+  "direccion": "el vergelito 168",
+  "productos": [
+    {
+      "producto_id": "68f1306c51f49105418d0de3",
+      "nombre": "Alitas BBQ",
+      "precio": 70,
+      "cantidad": 3
+    }
+  ],
+  "total": 210,
+  "estado": "listo"
+},
+{
+  "_id": {
+    "$oid": "68f159e792d39a23521c45f7"
+  },
+  "cliente": "emiliano vega diaz",
+  "telefono": "5560899091",
+  "direccion": "Calle Vid, Colonia Nueva Santa María, Ciudad de México, Azcapotzalco, Ciudad de México, 02800, México",
+  "productos": [
+    {
+      "producto_id": "68f1282d61ab44d30cce7620",
+      "nombre": "Boneless BBQ ",
+      "precio": 70,
+      "cantidad": 1
+    },
+    {
+      "producto_id": "68f1282d61ab44d30cce7622",
+      "nombre": "Papas a la Francesa chicas",
+      "precio": 60,
+      "cantidad": 1
+    },
+    {
+      "producto_id": "68f1306c51f49105418d0de3",
+      "nombre": "Alitas BBQ",
+      "precio": 70,
+      "cantidad": 1
+    },
+    {
+      "producto_id": "68f131a151f49105418d0de4",
+      "nombre": "Papas a la Francesa grandes",
+      "precio": 70,
+      "cantidad": 1
+    }
+  ],
+  "total": 270,
+  "estado": "listo"
+},
+{
+  "_id": {
+    "$oid": "68f15bebe05bfaec7eda5d82"
+  },
+  "cliente": "balca",
+  "telefono": "5566789374",
+  "direccion": "tacuba 18762",
+  "productos": [
+    {
+      "producto_id": "68f1282d61ab44d30cce7622",
+      "nombre": "Papas a la Francesa chicas",
+      "precio": 60,
+      "cantidad": 3
+    },
+    {
+      "producto_id": "68f1306c51f49105418d0de3",
+      "nombre": "Alitas BBQ",
+      "precio": 70,
+      "cantidad": 1
+    }
+  ],
+  "total": 250,
+  "estado": "listo"
+},
+{
+  "_id": {
+    "$oid": "68f1769f30ff57ecddee0574"
+  },
+  "cliente": "FERNANDA DIAZ ",
+  "telefono": "5567827361",
+  "direccion": "EL VERGELITO 169 COLONIA BENITO JUAREZ",
+  "productos": [
+    {
+      "producto_id": "68f1282d61ab44d30cce7622",
+      "nombre": "Papas a la Francesa chicas",
+      "precio": 60,
+      "cantidad": 2
+    },
+    {
+      "producto_id": "68f1306c51f49105418d0de3",
+      "nombre": "Alitas BBQ",
+      "precio": 70,
+      "cantidad": 1
+    }
+  ],
+  "total": 190,
+  "estado": "pendiente"
+}]

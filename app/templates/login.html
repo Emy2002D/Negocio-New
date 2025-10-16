@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Administradores</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/login.ico') }}" type="image/png">    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estyles.css') }}">
+</head>
+<body>
+    <h1>Corporación Galicia</h1>
+    <h2>Login Administradores</h2>
+    <form method="POST" action="/ingresar">
+        <input type="text" name="usuario" placeholder="Usuario" required>
+        <div class="input-group">
+            <input type="password" name="contraseña" placeholder="Contraseña" id="password" required>
+            <span class="toggle-password" onclick="togglePassword()">👁️</span>
+        </div>
+        <button type="submit">Entrar</button>
+    </form>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById("password");
+            input.type = input.type === "password" ? "text" : "password";
+        }
+    </script>
+</body>
+</html>

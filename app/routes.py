@@ -1,0 +1,186 @@
+from flask import Blueprint, render_template, request, redirect, url_for, session
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+
+main = Blueprint('main', __name__)
+
+# 🔗 Conexión a MongoDB Atlas
+client = MongoClient("mongodb+srv://Emiliano_2002:Emy200272D@cluster0.g38lrmr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+db = client['mi_base']
+usuarios = db['usuarios']
+productos = db['productos']
+
+# ✅ Verificación de conexión
+try:
+    client.admin.command('ping')
+    print("✅ Conexión a MongoDB exitosa")
+except Exception as e:
+    print("❌ Error al conectar a MongoDB:", e)
+
+# 🔐 Página de login
+@main.route('/')
+def login():
+    return render_template('login.html')
+
+# 🔑 Validación de usuario
+@main.route('/ingresar', methods=['POST'])
+def ingresar():
+    usuario = request.form['usuario']
+    contraseña = request.form['contraseña']
+    user = usuarios.find_one({'usuario': usuario, 'contraseña': contraseña})
+    if user:
+        session['usuario'] = usuario
+        session['rol'] = user['rol']
+        if user['rol'] == 'admin':
+            return redirect(url_for('main.dashboard_admin'))
+        else:
+            return redirect(url_for('main.dashboard_cliente'))
+    return "Usuario o contraseña incorrectos"
+
+# 🆕 Agregar nuevo producto desde el panel admin
+@main.route('/agregar_producto', methods=['POST'])
+def agregar_producto():
+    if session.get('rol') != 'admin':
+        return redirect(url_for('main.login'))
+
+    nombre = request.form['nuevo_nombre']
+    precio = float(request.form['nuevo_precio'])
+    imagen = request.form['nuevo_imagen']
+    disponible = request.form.get('nuevo_disponible') == 'on'
+
+    nuevo = {
+        "nombre": nombre,
+        "precio": precio,
+        "imagen": imagen,
+        "disponible": disponible
+    }
+
+    productos.insert_one(nuevo)
+    return redirect(url_for('main.dashboard_admin'))
+
+# 🛠 Panel administrador con edición masiva y eliminación
+@main.route('/admin', methods=['GET', 'POST'])
+def dashboard_admin():
+    if session.get('rol') != 'admin':
+        return redirect(url_for('main.login'))
+
+    if request.method == 'POST':
+        total = int(request.form['total'])
+        for i in range(total):
+            id = request.form[f'id_{i}']
+            nombre = request.form[f'nombre_{i}']
+            precio = float(request.form[f'precio_{i}'])
+            disponible = request.form.get(f'disponible_{i}') == 'on'
+            imagen = request.form[f'imagen_{i}']
+
+            productos.update_one(
+                {'_id': ObjectId(id)},
+                {'$set': {
+                    'nombre': nombre,
+                    'precio': precio,
+                    'disponible': disponible,
+                    'imagen': imagen
+                }}
+            )
+        return redirect(url_for('main.dashboard_admin'))
+
+    lista = list(productos.find())
+    return render_template('dashboard_admin.html', productos=lista)
+
+# 🗑 Eliminar producto
+@main.route('/eliminar_producto/<id>')
+def eliminar_producto(id):
+    if session.get('rol') != 'admin':
+        return redirect(url_for('main.login'))
+    productos.delete_one({'_id': ObjectId(id)})
+    return redirect(url_for('main.dashboard_admin'))
+
+# 👤 Panel cliente (requiere login)
+@main.route('/cliente')
+def dashboard_cliente():
+    if session.get('rol') == 'cliente':
+        disponibles = list(productos.find({'disponible': True}))
+        return render_template('dashboard_cliente.html', productos=disponibles)
+    return redirect(url_for('main.login'))
+
+# 🌐 Galería pública sin login
+@main.route('/galeria')
+def galeria_publica():
+    disponibles = list(productos.find({'disponible': True}))
+    return render_template('dashboard_cliente.html', productos=disponibles)
+
+# 🧪 Ruta de prueba
+@main.route('/testmongo')
+def test_mongo():
+    try:
+        resultado = usuarios.find_one()
+        return f"Conectado. Usuario encontrado: {resultado['usuario']}" if resultado else "Conectado, pero no hay usuarios."
+    except Exception as e:
+        return f"Error de conexión: {str(e)}"
+
+@main.route('/guardar_carrito_temporal', methods=['POST'])
+def guardar_carrito_temporal():
+    carrito = request.get_json()
+    session['carrito'] = carrito
+    return '', 200
+
+@main.route('/finalizar_pedido', methods=['GET', 'POST'])
+def finalizar_pedido():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        telefono = request.form['telefono']
+        direccion = request.form['direccion']
+        carrito = session.get('carrito', {})
+        if not carrito:
+            return redirect(url_for('main.dashboard_cliente'))
+
+        productos_pedido = []
+        total = 0
+        for pid, item in carrito.items():
+            productos_pedido.append({
+                'producto_id': pid,
+                'nombre': item['nombre'],
+                'precio': item['precio'],
+                'cantidad': item['cantidad']
+            })
+            total += item['precio'] * item['cantidad']
+
+        db['pedidos'].insert_one({
+            'cliente': nombre,
+            'telefono': telefono,
+            'direccion': direccion,
+            'productos': productos_pedido,
+            'total': total,
+            'estado': 'pendiente'
+        })
+        session.pop('carrito', None)
+        return "✅ Pedido realizado con éxito"
+
+    return render_template('finalizar_pedido.html')
+
+from flask import jsonify
+
+#lista de pedidos
+@main.route('/pedidos')
+def obtener_pedidos():
+    try:
+        pedidos = list(db['pedidos'].find())
+        for p in pedidos:
+            p['_id'] = str(p['_id'])  # Convertir ObjectId a string
+        return jsonify(pedidos)
+    except Exception as e:
+        print("❌ Error al obtener pedidos:", e)
+        return jsonify({"error": "No se pudieron cargar los pedidos"}), 500
+
+#lista de productos update
+@main.route('/marcar_listo/<pedido_id>', methods=['POST'])
+def marcar_pedido_listo(pedido_id):
+    try:
+        db['pedidos'].update_one(
+            {'_id': ObjectId(pedido_id)},
+            {'$set': {'estado': 'listo'}}
+        )
+        return jsonify({'success': True})
+    except Exception as e:
+        print("❌ Error al marcar pedido como listo:", e)
+        return jsonify({'success': False, 'error': str(e)}), 500

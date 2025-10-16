@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Corporación Galicia - Menú</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cliente.css') }}">
+<link rel="icon" href="{{ url_for('static', filename='img/cliente.ico') }}" type="image/png">
+<!-- 📦 Botón para ver pedidos centrado -->
+</head>
+<body>
+<header class="bg-dark text-white text-center p-3">
+    Lleva el toque Galicia y recibe 15% en tu próxima experiencia gourmet
+</header>
+
+<section class="hero text-center my-4">
+    <h1>Corporación Galicia</h1>
+    <p>Nuestros platillos no tienen bugs, solo crunch</p>
+</section>
+
+<section class="productos container">
+    <h2 class="mb-4">Nuestros productos disponibles</h2>
+    <div class="row">
+        {% for producto in productos %}
+        <div class="col-md-3 producto">
+            <img src="{{ producto['imagen'] }}" alt="{{ producto['nombre'] }}">
+            <h5>{{ producto['nombre'] }}</h5>
+            <p>${{ producto['precio'] }}</p>
+            <button class="btn btn-primary agregar-carrito" 
+                    data-id="{{ producto['_id'] }}" 
+                    data-nombre="{{ producto['nombre'] }}" 
+                    data-precio="{{ producto['precio'] }}">Agregar</button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Botón del carrito -->
+<div id="boton-carrito">
+    Pedido (<span id="contador-carrito">0</span>)
+</div>
+
+<!-- Contenido del carrito -->
+<div id="contenido-carrito">
+    <h5>Carrito de compras</h5>
+    <ul id="lista-carrito"></ul>
+    <p>Total: $<span id="total-carrito">0</span></p>
+    <button id="btn-finalizar" class="btn btn-success">Finalizar pedido</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let carrito = {};
+
+// Toggle del carrito al hacer click en el botón
+const botonCarrito = document.getElementById('boton-carrito');
+const contenidoCarrito = document.getElementById('contenido-carrito');
+const contadorCarrito = document.getElementById('contador-carrito');
+
+botonCarrito.addEventListener('click', () => {
+    contenidoCarrito.style.display = contenidoCarrito.style.display === 'block' ? 'none' : 'block';
+});
+
+// Agregar productos al carrito
+document.querySelectorAll('.agregar-carrito').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const nombre = btn.dataset.nombre;
+        const precio = parseFloat(btn.dataset.precio);
+
+        if (carrito[id]) {
+            carrito[id].cantidad += 1;
+        } else {
+            carrito[id] = {nombre: nombre, precio: precio, cantidad: 1};
+        }
+
+        actualizarCarrito();
+        contenidoCarrito.style.display = 'block';
+    });
+});
+
+// Actualizar contenido del carrito
+function actualizarCarrito() {
+    const lista = document.getElementById('lista-carrito');
+    lista.innerHTML = '';
+    let total = 0;
+    let contador = 0;
+    for (let key in carrito) {
+        const item = carrito[key];
+        total += item.precio * item.cantidad;
+        contador += item.cantidad;
+        lista.innerHTML += `<li>${item.nombre} x ${item.cantidad} - $${(item.precio * item.cantidad).toFixed(2)}</li>`;
+    }
+    document.getElementById('total-carrito').innerText = total.toFixed(2);
+    contadorCarrito.innerText = contador;
+}
+
+// Guardar carrito en sesión y redirigir al formulario
+document.getElementById('btn-finalizar').addEventListener('click', () => {
+    fetch("/guardar_carrito_temporal", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(carrito)
+    }).then(() => window.location.href = "/finalizar_pedido");
+});
+</script>
+</body>
+</html>

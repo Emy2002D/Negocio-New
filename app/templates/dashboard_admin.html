@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Productos</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/admin.ico') }}" type="image/png">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+  <a href="/" class="salir">Salir</a>
+  <h2>Corporación Galicia - Panel de Productos</h2>
+
+  <!-- 📦 Botón para ver pedidos centrado -->
+  <div style="text-align:center; margin-bottom:20px;">
+    <button id="verPedidos">📦 Ver Pedidos</button>
+  </div>
+
+  <!-- 🔍 Buscador -->
+  <div style="text-align:center; margin-bottom:20px;">
+    <input type="text" id="buscador" placeholder="Buscar producto..."
+           style="padding:10px; width:60%; border:none; border-radius:5px; background-color:#222; color:white; box-shadow:0 0 5px #ff0000;">
+  </div>
+
+  <!-- Formulario principal -->
+  <form method="POST" action="/admin">
+    <div class="guardar-todo">
+      <button type="submit">Guardar todos los cambios</button>
+    </div>
+    <table id="tabla-productos">
+      <tr>
+        <th>Imagen</th>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Disponible</th>
+        <th>Eliminar</th>
+      </tr>
+      {% for producto in productos %}
+      <tr>
+        <td>
+          <img src="{{ producto.imagen }}" alt="Imagen">
+          <input type="text" name="imagen_{{ loop.index0 }}" value="{{ producto.imagen }}">
+        </td>
+        <td><input type="text" name="nombre_{{ loop.index0 }}" value="{{ producto.nombre }}"></td>
+        <td><input type="number" name="precio_{{ loop.index0 }}" value="{{ producto.precio }}"></td>
+        <td><input type="checkbox" name="disponible_{{ loop.index0 }}" {% if producto.disponible %}checked{% endif %}></td>
+        <td>
+          <a href="/eliminar_producto/{{ producto._id }}"><button type="button" class="eliminar">Eliminar</button></a>
+        </td>
+        <input type="hidden" name="id_{{ loop.index0 }}" value="{{ producto._id }}">
+      </tr>
+      {% endfor %}
+    </table>
+    <input type="hidden" name="total" value="{{ productos|length }}">
+  </form>
+
+  <!-- ➕ Botón flotante para abrir el modal -->
+  <button class="btn-flotante" id="abrirModal">+</button>
+
+  <!-- 🧾 Modal para agregar producto -->
+  <div id="modalAgregar" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar" id="cerrarModal">&times;</span>
+      <h3>Agregar Nuevo Producto</h3>
+      <form class="agregar" method="POST" action="/agregar_producto">
+        <input type="text" name="nuevo_nombre" placeholder="Nombre del producto" required>
+        <input type="number" name="nuevo_precio" placeholder="Precio" required>
+        <input type="text" name="nuevo_imagen" placeholder="Ruta de imagen" required>
+        <label>
+          Disponible <input type="checkbox" name="nuevo_disponible">
+        </label>
+        <button type="submit">Agregar producto</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 📦 Modal para mostrar pedidos -->
+  <div id="modalPedidos" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar" id="cerrarPedidos">&times;</span>
+      <h3>Pedidos Recibidos</h3>
+      <div id="contenidoPedidos" style="max-height:400px; overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- 🔎 Buscador dinámico + modales -->
+  <script>
+    const buscador = document.getElementById('buscador');
+    const tabla = document.getElementById('tabla-productos');
+
+    buscador.addEventListener('keyup', function() {
+      const texto = this.value.toLowerCase();
+      const filas = tabla.getElementsByTagName('tr');
+      for (let i = 1; i < filas.length; i++) {
+        const nombre = filas[i].getElementsByTagName('input')[1]?.value.toLowerCase() || '';
+        filas[i].style.display = nombre.includes(texto) ? '' : 'none';
+      }
+    });
+
+    // ⚙️ Modal abrir/cerrar producto
+    const modal = document.getElementById("modalAgregar");
+    const btnAbrir = document.getElementById("abrirModal");
+    const btnCerrar = document.getElementById("cerrarModal");
+
+    btnAbrir.onclick = () => modal.style.display = "block";
+    btnCerrar.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+    // 📦 Modal abrir/cerrar pedidos
+    const btnPedidos = document.getElementById("verPedidos");
+    const modalPedidos = document.getElementById("modalPedidos");
+    const cerrarPedidos = document.getElementById("cerrarPedidos");
+    const contenidoPedidos = document.getElementById("contenidoPedidos");
+
+    btnPedidos.onclick = async () => {
+      modalPedidos.style.display = "block";
+      contenidoPedidos.innerHTML = "<p>Cargando pedidos...</p>";
+
+      try {
+        const res = await fetch("/pedidos");
+        const pedidos = await res.json();
+
+        if (pedidos.length === 0) {
+          contenidoPedidos.innerHTML = "<p>No hay pedidos registrados.</p>";
+        } else {
+          contenidoPedidos.innerHTML = pedidos
+            .filter(p => p.estado !== 'listo')
+            .map(p => `
+              <div class="pedido" data-id="${p._id}" style="border-bottom:1px solid #444; padding:10px; margin-bottom:10px;">
+                <strong>🧑 Cliente:</strong> ${p.cliente || 'N/A'}<br>
+                <strong>📞 Teléfono:</strong> ${p.telefono || 'N/A'}<br>
+                <strong>📍 Dirección:</strong> ${p.direccion || 'N/A'}<br>
+                <strong>🛒 Productos:</strong> ${
+                  Array.isArray(p.productos)
+                    ? p.productos.map(prod => `${prod.nombre} x${prod.cantidad}`).join(', ')
+                    : 'N/A'
+                }<br>
+                <strong>💰 Total:</strong> $${p.total || '0.00'}<br>
+                <strong>📦 Estado:</strong> ${p.estado || 'pendiente'}<br>
+                <button class="btn-listo" data-id="${p._id}" style="
+                  margin-top: 10px;
+                  background-color: #00cc66;
+                  color: white;
+                  border: none;
+                  padding: 6px 12px;
+                  border-radius: 4px;
+                  cursor: pointer;
+                ">✅ Listo</button>
+              </div>
+            `).join('');
+        }
+      } catch (err) {
+        contenidoPedidos.innerHTML = "<p>Error al cargar pedidos.</p>";
+        console.error(err);
+      }
+    };
+
+    // ✅ Marcar pedido como listo
+    contenidoPedidos.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('btn-listo')) {
+        const pedidoId = e.target.getAttribute('data-id');
+        try {
+          const res = await fetch(`/marcar_listo/${pedidoId}`, {
+            method: 'POST'
+          });
+          const data = await res.json();
+          if (data.success) {
+            const pedidoDiv = e.target.closest('.pedido');
+            if (pedidoDiv) pedidoDiv.remove();
+          } else {
+            alert("Error al actualizar el pedido.");
+          }
+        } catch (err) {
+          console.error("Error al marcar como listo:", err);
+          alert("Error de conexión al servidor.");
+        }
+      }
+    });
+
+    cerrarPedidos.onclick = () => modalPedidos.style.display = "none";
+    window.onclick = (e) => {
+      if (e.target === modalPedidos) {
+        modalPedidos.style.display = "none";
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+        body {
+            background-color: #0d0d0d;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 40px;
+        }
+
+        h2 {
+            color: #f5f2f2;
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        form.agregar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        form.agregar input[type="text"],
+        form.agregar input[type="number"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #222;
+            color: white;
+            width: 200px;
+        }
+
+        form.agregar input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+
+        form.agregar button {
+            padding: 10px 20px;
+            background-color: #0e0d0d;
+            border: none;
+            box-shadow: 0 0 5px #ff0000;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #fbf8f8;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f70505;
+        }
+
+        input[type="text"], input[type="number"] {
+            background-color: #222;
+            color: white;
+            border: none;
+            padding: 5px;
+            width: 100%;
+        }
+
+        img {
+            max-width: 100px;
+            border-radius: 5px;
+        }
+
+        button.eliminar {
+            background-color: #0a0909;
+            border: none;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            box-shadow: 0 0 5px #ff0000;
+        }
+
+        button.eliminar:hover {
+            background-color: #0a0a0a;
+        }
+
+        .guardar-todo {
+            text-align: right;
+            margin: 20px 0;
+        }
+
+        .guardar-todo button {
+            background-color: #040303;
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 0 5px #ff0000;
+            cursor: pointer;
+        }
+
+        .guardar-todo button:hover {
+            background-color: #cc0000;
+        }
+
+        .salir {
+            display: inline-block;
+            margin-bottom: 5px;
+            padding: 10px 20px;
+            background-color: #090909;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 0 5px #ff0000;
+            transition: background-color 0.3s ease;
+        }
+
+        .salir:hover {
+            background-color: #cc0000;
+        }
+
+        /* 🔽 RESPONSIVE 🔽 */
+        @media (max-width: 1024px) {
+            body {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 2em;
+            }
+
+            form.agregar {
+                gap: 10px;
+            }
+
+            form.agregar input[type="text"],
+            form.agregar input[type="number"] {
+                width: 180px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            form.agregar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            form.agregar input[type="text"],
+            form.agregar input[type="number"] {
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            img {
+                max-width: 80px;
+            }
+
+            .guardar-todo {
+                text-align: center;
+            }
+
+            .guardar-todo button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 1.8em;
+            }
+
+            form.agregar button {
+                width: 100%;
+                padding: 12px;
+            }
+
+            th, td {
+                padding: 6px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            img {
+                max-width: 70px;
+            }
+
+            .salir {
+                display: block;
+                text-align: center;
+                width: 100%;
+            }
+        }
+        
+        .btn-flotante {
+            position: absolute;
+            top: 25px;              /* lo subimos a la parte superior */
+            right: 25px;            /* lo movemos a la esquina opuesta del botón “Salir” */
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            font-size: 32px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff0000;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .btn-flotante:hover {
+            background-color: #cc0000;
+            box-shadow: 0 0 15px #ff3333;
+        }
+
+
+        /* 🧾 Fondo del modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* 📦 Contenedor del formulario modal */
+        .modal-contenido {
+            background-color: #111;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #ff0000;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+            box-shadow: 0 0 15px #ff0000;
+        }
+
+        .modal-contenido h3 {
+            text-align: center;
+            color: #ff3333;
+            margin-bottom: 20px;
+        }
+
+        .cerrar {
+            color: #fff;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .cerrar:hover {
+            color: #ff0000;
+        }
+
+        /* Inputs dentro del modal */
+        .modal-contenido input[type="text"],
+        .modal-contenido input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background-color: #222;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .modal-contenido label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        .modal-contenido button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff0000;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 0 5px #ff0000;
+        }
+
+        .modal-contenido button:hover {
+            background-color: #cc0000;
+        }
+          
+         body {
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        img {
+            max-width: 80px;
+            height: auto;
+        }
+
+        .btn-flotante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 0 5px black;
+            z-index: 1000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal-contenido {
+            background-color: #111;
+            margin: 10% auto;
+            padding: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            color: white;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .cerrar {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                display: none;
+            }
+
+            td {
+                position: relative;
+                padding-left: 50%;
+                text-align: left;
+            }
+
+            td::before {
+                position: absolute;
+                left: 10px;
+                width: 45%;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+
+            td:nth-of-type(1)::before { content: "Imagen"; }
+            td:nth-of-type(2)::before { content: "Nombre"; }
+            td:nth-of-type(3)::before { content: "Precio"; }
+            td:nth-of-type(4)::before { content: "Disponible"; }
+            td:nth-of-type(5)::before { content: "Eliminar"; }
+
+            .btn-flotante {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            #verPedidos {
+                right: 10px !important;
+                top: 10px;
+            }
+        }
+                #verPedidos {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 5px black;
+            font-size: 16px;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        #verPedidos:hover {
+            background-color: #cc0000;
+            box-shadow: 0 0 10px #ff3333;
+        }

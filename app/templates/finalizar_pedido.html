@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulario de Envío</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #111; /* negro elegante */
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        display: flex;
+        width: 90%;
+        max-width: 1200px;
+        gap: 30px;
+    }
+
+    form {
+        background-color: #1a1a1a;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(255,0,0,0.5);
+        flex: 1;
+        min-width: 350px;
+    }
+
+    h2 {
+        text-align: center;
+        color: #ff3b3b; /* rojo elegante */
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 3px #000;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 2px solid #ff3b3b;
+        border-radius: 8px;
+        background-color: #111;
+        color: #fff;
+        font-size: 16px;
+    }
+
+    input::placeholder {
+        color: #ff9999;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff3b3b;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background-color: #cc2a2a;
+    }
+
+    #map {
+        flex: 1;
+        height: 500px;
+        border-radius: 12px;
+        border: 2px solid #ff3b3b;
+    }
+
+    @media(max-width: 900px) {
+        .container {
+            flex-direction: column;
+        }
+        #map {
+            height: 400px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <form method="POST" id="pedidoForm">
+        <h2>Datos para envío</h2>
+        <input type="text" name="nombre" placeholder="Nombre completo" required>
+        <input type="tel" name="telefono" placeholder="Teléfono" required>
+        <input type="text" name="direccion" placeholder="Dirección" id="direccion" required>
+        <button type="submit" class="btn btn-success">Enviar pedido</button>
+    </form>
+
+    <iframe id="map" src="https://maps.google.com/maps?q=&output=embed"></iframe>
+</div>
+
+<script>
+const map = document.getElementById('map');
+
+document.getElementById('direccion').addEventListener('input', function() {
+    const direccion = encodeURIComponent(this.value);
+    map.src = `https://maps.google.com/maps?q=${direccion}&output=embed`;
+});
+</script>
+
+</body>
+</html>

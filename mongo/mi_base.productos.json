@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "68f1282d61ab44d30cce7620"
+  },
+  "nombre": "Boneless BBQ ",
+  "precio": 70,
+  "disponible": true,
+  "imagen": "/static/imagenes/Boneles.avif"
+},
+{
+  "_id": {
+    "$oid": "68f1282d61ab44d30cce7622"
+  },
+  "nombre": "Papas a la Francesa chicas",
+  "precio": 60,
+  "disponible": true,
+  "imagen": "/static/imagenes/papas.jpeg"
+},
+{
+  "_id": {
+    "$oid": "68f1306c51f49105418d0de3"
+  },
+  "nombre": "Alitas BBQ",
+  "precio": 70,
+  "imagen": "/static/imagenes/Alitas.jpeg",
+  "disponible": true
+},
+{
+  "_id": {
+    "$oid": "68f131a151f49105418d0de4"
+  },
+  "nombre": "Papas a la Francesa grandes",
+  "precio": 70,
+  "imagen": "/static/imagenes/papasG.jpeg",
+  "disponible": true
+}]

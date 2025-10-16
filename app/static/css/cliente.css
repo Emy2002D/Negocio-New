@@ -1,0 +1,206 @@
+        body {
+            background-color: #0d0d0d;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        header {
+            background-color: #ec0101;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-shadow: 0 0 5px #f30404;
+        }
+
+        .bg-dark {
+        background-color: #010101 !important;
+        }
+
+        .hero {
+            background-image: url('/static/imagenes/fondo1.jpeg'); /* Puedes cambiar esta imagen */
+            background-size: cover;
+            background-position: center;
+            padding: 100px 20px;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 10px #000;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            color: #f6f3f3;
+            text-shadow: 
+        -1px -1px 0 #050404,  
+         1px -1px 0 #050404,  
+        -1px  1px 0 #050404,  
+         1px  1px 0 #050404;  /* Contorno rojo alrededor de la letra */
+}
+
+        .hero p {
+            font-size: 1.3em;
+            font-style: italic;
+            color: #000000;
+            text-shadow: 
+        -1px -1px 0 #ece4e4,  
+         1px -1px 0 #ece4e4,  
+        -1px  1px 0 #ece4e4,  
+         1px  1px 0 #ece4e4;  /* Contorno rojo alrededor de la letra */
+}
+    
+
+        .botones {
+            margin-top: 30px;
+        }
+
+        .botones a {
+            margin: 10px;
+            padding: 12px 25px;
+            background-color: #ff3333;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 0 5px #ff0000;
+        }
+
+        .botones a:hover {
+            background-color: #cc0000;
+        }
+
+        .productos {
+            padding: 60px 40px;
+            background-color: #111;
+        }
+
+        .productos h2 {
+            text-align: center;
+            font-size: 2em;
+            color: #f9f5f5;
+            margin-bottom: 40px;
+        }
+
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .producto {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 10px #ff3333;
+            transition: transform 0.3s ease;
+        }
+
+        .producto:hover {
+            transform: scale(1.05);
+        }
+
+        .producto img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .producto h3 {
+            margin: 0;
+            font-size: 1.4em;
+            color: #ff6666;
+        }
+
+        .producto p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+            color: #ccc;
+        }
+        
+        .producto {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .producto img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    /* Botón del carrito fijo arriba a la derecha */
+    #boton-carrito {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: #000;       /* Fondo negro */
+        color: #fff;                  /* Letras blancas */
+        border: 2px solid #ff0000;    /* Contorno rojo */
+        padding: 10px 16px;           /* Espaciado interno */
+        border-radius: 50px;          /* Redondeado */
+        cursor: pointer;
+        z-index: 1000;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.2s, background-color 0.2s;
+    }
+
+    /* Efecto hover opcional */
+    #boton-carrito:hover {
+        transform: scale(1.05);
+        background-color: #111;  /* Fondo un poquito más claro al pasar el mouse */
+    }
+
+    #contenido-carrito {
+        position: absolute;
+        top: 70px;
+        right: 20px;
+        width: 300px;
+        background-color: #000;       /* Fondo negro */
+        color: #fff;                  /* Letras blancas */
+        border: 2px solid #ff0000;    /* Contorno rojo */
+        padding: 15px;
+        border-radius: 10px;
+        display: none;
+        z-index: 999;
+    }
+
+    /* Título del carrito */
+    #contenido-carrito h5 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #fff;                  /* Letras blancas */
+    }
+
+    /* Lista de productos */
+    #contenido-carrito ul {
+        list-style: none;
+        padding-left: 0;
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        color: #fff;                  /* Letras blancas */
+    }
+
+    /* Elementos de la lista */
+    #contenido-carrito li {
+        margin-bottom: 5px;
+        font-size: 14px;
+        border-bottom: 1px solid #ff0000; /* Separador rojo opcional */
+        padding-bottom: 3px;
+    }
+
+    /* Botón de finalizar pedido */
+    #contenido-carrito .btn {
+        width: 100%;
+        background-color: #ff0000;    /* Fondo rojo */
+        color: #fff;                  /* Letras blancas */
+        border: none;
+    }
+
+    #contenido-carrito .btn:hover {
+        background-color: #cc0000;    /* Rojo más oscuro al pasar el mouse */
+    }
