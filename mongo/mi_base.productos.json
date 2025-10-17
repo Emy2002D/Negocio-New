@@ -33,4 +33,40 @@
   "precio": 70,
   "imagen": "/static/imagenes/papasG.jpeg",
   "disponible": true
+},
+{
+  "_id": {
+    "$oid": "68f2676ff5f290a6f3afe9cf"
+  },
+  "nombre": "Fresas con Crema",
+  "precio": 50,
+  "imagen": "/static/imagenes/fresas.jpeg",
+  "disponible": true
+},
+{
+  "_id": {
+    "$oid": "68f267fff5f290a6f3afe9d0"
+  },
+  "nombre": "Pai de Limon",
+  "precio": 40,
+  "imagen": "/static/imagenes/pai.jpeg",
+  "disponible": true
+},
+{
+  "_id": {
+    "$oid": "68f26874f5f290a6f3afe9d1"
+  },
+  "nombre": "Flan Napolitano",
+  "precio": 40,
+  "imagen": "/static/imagenes/flan.jpeg",
+  "disponible": true
+},
+{
+  "_id": {
+    "$oid": "68f2690bf5f290a6f3afe9d2"
+  },
+  "nombre": "Imposible",
+  "precio": 40,
+  "imagen": "/static/imagenes/imposible.jpeg",
+  "disponible": true
 }]
