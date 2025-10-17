@@ -92,12 +92,13 @@
 
 <div class="container">
     <form method="POST" id="pedidoForm">
-        <h2>Datos para envío</h2>
-        <input type="text" name="nombre" placeholder="Nombre completo" required>
-        <input type="tel" name="telefono" placeholder="Teléfono" required>
-        <input type="text" name="direccion" placeholder="Dirección" id="direccion" required>
-        <button type="submit" class="btn btn-success">Enviar pedido</button>
-    </form>
+  <h2>Datos para envío</h2>
+  <input type="text" name="nombre" placeholder="Nombre completo" required>
+  <input type="tel" name="telefono" placeholder="Teléfono" required>
+  <input type="text" name="direccion" placeholder="Dirección" id="direccion" required>
+  <input type="datetime-local" name="fecha" required>
+  <button type="submit" class="btn btn-success">Enviar pedido</button>
+</form>
 
     <iframe id="map" src="https://maps.google.com/maps?q=&output=embed"></iframe>
 </div>

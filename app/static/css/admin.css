@@ -1,0 +1,191 @@
+/* 🌑 Fondo general */
+body {
+  background-color: #111;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding-bottom: 100px;
+}
+
+/* 🔝 Barra superior con botones */
+.navbar-galicia {
+  background-color: #000;
+  border-bottom: 2px solid #ff3c3c;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.navbar-galicia a,
+.navbar-galicia button {
+  background-color: #ff3c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  margin: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+.navbar-galicia a:hover,
+.navbar-galicia button:hover {
+  background-color: #cc2a2a;
+  transform: scale(1.05);
+}
+
+/* 🔍 Buscador */
+#buscador {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #faf5f5;
+  color: rgb(5, 5, 5);
+  border: 1px solid #f10303;
+}
+
+/* 🧾 Tabla de productos */
+#tabla-productos {
+  width: 100%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: #1a1a1a;
+  box-shadow: 0 0 15px rgba(255, 60, 60, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+}
+#tabla-productos th {
+  background-color: #ff3c3c;
+  color: white;
+  padding: 14px;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+#tabla-productos td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #444;
+  color: white;
+  vertical-align: middle;
+}
+#tabla-productos td img {
+  width: 80px;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#tabla-productos td img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(255, 60, 60, 0.6);
+}
+
+/* ✅ Botones generales */
+button,
+.eliminar {
+  background-color: #ff3c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+button:hover,
+.eliminar:hover {
+  background-color: #cc2a2a;
+  transform: scale(1.05);
+}
+
+/* ✅ Guardar todo */
+.guardar-todo {
+  text-align: center;
+  margin: 30px 0;
+}
+.guardar-todo button {
+  background-color: #00cc66;
+}
+.guardar-todo button:hover {
+  background-color: #00994d;
+}
+
+/* ➕ Botón flotante */
+.btn-flotante {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #ff3c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 0 10px rgba(255, 60, 60, 0.6);
+  cursor: pointer;
+  z-index: 1000;
+}
+.btn-flotante:hover {
+  background-color: #cc2a2a;
+}
+
+/* 🧾 Modales */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8);
+}
+.modal-contenido {
+  background-color: #1a1a1a;
+  margin: 5% auto;
+  padding: 30px;
+  border: 2px solid #ff3c3c;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  color: white;
+  box-shadow: 0 0 20px rgba(255, 60, 60, 0.5);
+}
+.cerrar {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #ff3c3c;
+}
+.cerrar:hover {
+  color: #fff;
+}
+
+/* 📱 Responsive */
+@media(max-width: 768px) {
+  .navbar-galicia {
+    flex-direction: column;
+    align-items: center;
+  }
+  #tabla-productos th,
+  #tabla-productos td {
+    font-size: 14px;
+  }
+  #tabla-productos td img {
+    width: 60px;
+  }
+  .modal-contenido {
+    width: 95%;
+  }
+  .btn-flotante {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+}

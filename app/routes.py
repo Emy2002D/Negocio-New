@@ -9,6 +9,7 @@ client = MongoClient("mongodb+srv://Emiliano_2002:Emy200272D@cluster0.g38lrmr.mo
 db = client['mi_base']
 usuarios = db['usuarios']
 productos = db['productos']
+pedidos = db['pedidos'] 
 
 # ✅ Verificación de conexión
 try:
@@ -27,14 +28,20 @@ def login():
 def ingresar():
     usuario = request.form['usuario']
     contraseña = request.form['contraseña']
-    user = usuarios.find_one({'usuario': usuario, 'contraseña': contraseña})
+
+    user = db.usuarios.find_one({'usuario': usuario, 'contraseña': contraseña})
+
     if user:
         session['usuario'] = usuario
-        session['rol'] = user['rol']
-        if user['rol'] == 'admin':
+        session['rol'] = user.get('rol', 'cliente')
+
+        if session['rol'] == 'admin':
             return redirect(url_for('main.dashboard_admin'))
+        elif session['rol'] == 'trabajador':
+            return redirect(url_for('main.dashboard_trabajador'))
         else:
             return redirect(url_for('main.dashboard_cliente'))
+
     return "Usuario o contraseña incorrectos"
 
 # 🆕 Agregar nuevo producto desde el panel admin
@@ -124,6 +131,8 @@ def guardar_carrito_temporal():
     session['carrito'] = carrito
     return '', 200
 
+from datetime import datetime
+
 @main.route('/finalizar_pedido', methods=['GET', 'POST'])
 def finalizar_pedido():
     if request.method == 'POST':
@@ -131,6 +140,7 @@ def finalizar_pedido():
         telefono = request.form['telefono']
         direccion = request.form['direccion']
         carrito = session.get('carrito', {})
+
         if not carrito:
             return redirect(url_for('main.dashboard_cliente'))
 
@@ -151,8 +161,10 @@ def finalizar_pedido():
             'direccion': direccion,
             'productos': productos_pedido,
             'total': total,
-            'estado': 'pendiente'
+            'estado': 'pendiente',
+            'fecha': datetime.now()  # ← aquí se guarda la fecha actual
         })
+
         session.pop('carrito', None)
         return "✅ Pedido realizado con éxito"
 
@@ -184,3 +196,122 @@ def marcar_pedido_listo(pedido_id):
     except Exception as e:
         print("❌ Error al marcar pedido como listo:", e)
         return jsonify({'success': False, 'error': str(e)}), 500
+
+## Trabajador
+
+@main.route('/dashboard_trabajador')
+def dashboard_trabajador():
+    if session.get("rol") != "trabajador":
+        return redirect(url_for("main.login"))
+    lista_productos = list(productos.find())
+    lista_pedidos = list(pedidos.find({"estado": {"$ne": "listo"}}))  # ← solo pedidos no listos
+    return render_template('dashboard_trabajador.html', productos=lista_productos, pedidos=lista_pedidos)
+
+@main.route("/agregar_producto_trabajador", methods=["POST"])
+def agregar_producto_trabajador():
+    if session.get("rol") != "trabajador":
+        return redirect(url_for("main.login"))
+
+    nuevo_producto = {
+        "nombre": request.form["nombre"],
+        "precio": float(request.form["precio"]),
+        "imagen": request.form["imagen"],
+        "disponible": True
+    }
+    productos.insert_one(nuevo_producto)
+    return redirect(url_for("main.dashboard_trabajador"))
+
+@main.route("/actualizar_producto_trabajador/<id>", methods=["POST"])
+def actualizar_producto_trabajador(id):
+    if session.get("rol") != "trabajador":
+        return redirect(url_for("main.login"))
+
+    productos.update_one(
+        {"_id": ObjectId(id)},
+        {"$set": {
+            "nombre": request.form["nombre"],
+            "precio": float(request.form["precio"]),
+            "imagen": request.form["imagen"],
+            "disponible": "disponible" in request.form
+        }}
+    )
+    return redirect(url_for("main.dashboard_trabajador"))
+
+
+@main.route("/pedido_listo/<id>", methods=["POST"])
+def pedido_listo(id):
+    if session.get("rol") != "trabajador":
+        return redirect(url_for("main.login"))
+
+    pedidos.update_one(
+        {"_id": ObjectId(id)},
+        {"$set": {"estado": "listo"}}
+    )
+    return redirect(url_for("main.dashboard_trabajador"))
+
+@main.route("/ventas_hoy")
+def ventas_hoy():
+    pedidos_listos = list(pedidos.find({"estado": "listo"}))
+
+    pedidos_serializados = []
+    for p in pedidos_listos:
+        pedidos_serializados.append({
+            "_id": str(p["_id"]),
+            "cliente": p.get("cliente", "N/A"),
+            "telefono": p.get("telefono", "N/A"),
+            "direccion": p.get("direccion", "N/A"),
+            "total": p.get("total", 0),
+            "productos": p.get("productos", []),
+            "fecha": p.get("fecha", datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
+        })
+
+    return jsonify({
+        "success": True,
+        "pedidos": pedidos_serializados
+    })
+
+##admin Agregar usuarios.
+@main.route("/agregar_admin", methods=["POST"])
+def registrar_admin():  # ✅ nombre único
+    usuario = request.form.get("admin_usuario")
+    contraseña = request.form.get("admin_contraseña")
+    rol = request.form.get("admin_rol")
+
+    if not usuario or not contraseña or not rol:
+        return "Faltan datos", 400
+
+    nuevo_usuario = {
+        "usuario": usuario,
+        "contraseña": contraseña,
+        "rol": rol
+    }
+
+    usuarios.insert_one(nuevo_usuario)
+    return redirect("/admin")
+###### actualizar y borrar users
+
+@main.route('/actualizar_usuarios', methods=['POST'])
+def actualizar_usuarios():
+    total = int(request.form['total'])
+    for i in range(total):
+        id = request.form[f'id_{i}']
+        usuario = request.form[f'usuario_{i}']
+        contraseña = request.form[f'contraseña_{i}']
+        rol = request.form[f'rol_{i}']
+
+        usuarios.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {
+                'usuario': usuario,
+                'contraseña': contraseña,
+                'rol': rol
+            }}
+        )
+    return redirect(url_for('main.dashboard_admin'))
+
+# 🗑 Eliminar usuario desde la tabla
+@main.route('/eliminar_usuario/<id>')
+def eliminar_usuario(id):
+    usuarios.delete_one({'_id': ObjectId(id)})
+    return redirect(url_for('main.dashboard_admin'))
+
